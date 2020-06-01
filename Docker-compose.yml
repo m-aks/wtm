@@ -1,0 +1,46 @@
+version: '3.3'
+
+services:
+
+ db:
+  build: ./db
+  restart: always
+  ports:
+   - "3306:3306"
+  environment:
+   MYSQL_ROOT_PASSWORD: rebus1999
+#  security_opt:
+#   - seccomp:unconfined
+#  expose: 
+#   - "3306"
+#  volumes:
+#   - ./databases:var/lib/mysql
+    
+ phpmyadmin:
+  image: phpmyadmin/phpmyadmin
+  ports:
+   - "8383:80"
+  environment:
+   MYSQL_ROOT_PASSWORD: rebus1999
+  depends_on:
+   - db
+   
+ back:
+  build: ./back
+  restart: always
+  links:
+   - db:mysql
+  ports:
+   - "8181:8181"
+  depends_on:
+   - db
+   
+ front:
+  build: ./front
+  restart: always
+  ports:
+   - "8282:80"
+  links:
+   - back:tomee
+  depends_on:
+   - back
